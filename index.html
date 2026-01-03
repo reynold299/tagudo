@@ -27,7 +27,7 @@
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 600px;
+            max-width: 400px;
         }
         
         h1 {
@@ -148,27 +148,6 @@
         .voucher-btn:hover:not(:disabled) {
             background: #218838;
         }
-        
-        .voucher-code {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            text-align: center;
-            border: 2px dashed #667eea;
-        }
-        
-        .voucher-code h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .code {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            letter-spacing: 2px;
-        }
 
         .help-text {
             text-align: center;
@@ -201,78 +180,109 @@
             color: #667eea;
         }
 
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
+        /* Modal/Popup Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
 
-        .tab {
-            padding: 10px 20px;
-            background: transparent;
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .voucher-code-display {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .voucher-code-large {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 3px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
             border: none;
-            border-bottom: 3px solid transparent;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
             font-weight: bold;
-            color: #666;
-            margin: 0;
-            border-radius: 0;
+            margin: 10px 5px;
         }
 
-        .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+        .copy-btn:hover {
+            background: #5568d3;
         }
 
-        .tab:hover {
-            background: #f0f0f0;
+        .copy-btn.copied {
+            background: #28a745;
         }
 
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .history-table th {
-            background: #667eea;
-            color: white;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .history-table td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .history-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .no-data {
-            text-align: center;
-            color: #666;
-            padding: 20px;
-            font-style: italic;
-        }
-
-        .refresh-btn {
-            padding: 8px 15px;
-            background: #667eea;
+        .close-btn {
+            background: #6c757d;
             color: white;
             border: none;
+            padding: 12px 30px;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-            width: auto;
+            font-weight: bold;
+            margin: 10px 5px;
         }
 
-        .refresh-btn:hover {
-            background: #5568d3;
+        .close-btn:hover {
+            background: #5a6268;
+        }
+
+        .modal-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -321,68 +331,67 @@
             <div style="text-align: center; color: #666; font-size: 12px; margin-bottom: 10px;">
                 MAC: <span id="macDisplay"></span>
             </div>
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('claim')">Claim Voucher</button>
-                <button class="tab" onclick="switchTab('history')">Claim History</button>
+            <div id="dashMessage"></div>
+            <div class="points-display">
+                <div>Your Points</div>
+                <div id="pointsDisplay">0</div>
+            </div>
+            
+            <div class="info message">
+                4 Points = 12 Hours<br>
+                5 Points = 24 Hours
             </div>
 
-            <!-- Claim Tab -->
-            <div id="claimTab">
-                <div id="dashMessage"></div>
-                <div class="points-display">
-                    <div>Your Points</div>
-                    <div id="pointsDisplay">0</div>
+            <div class="stock-info">
+                <div class="stock-item">
+                    <div class="stock-label">12H Available</div>
+                    <div class="stock-count" id="stock12h">0</div>
                 </div>
-                
-                <div class="info message">
-                    4 Points = 12 Hours<br>
-                    5 Points = 24 Hours
+                <div class="stock-item">
+                    <div class="stock-label">24H Available</div>
+                    <div class="stock-count" id="stock24h">0</div>
                 </div>
-
-                <div class="stock-info">
-                    <div class="stock-item">
-                        <div class="stock-label">12H Available</div>
-                        <div class="stock-count" id="stock12h">0</div>
-                    </div>
-                    <div class="stock-item">
-                        <div class="stock-label">24H Available</div>
-                        <div class="stock-count" id="stock24h">0</div>
-                    </div>
-                </div>
-                
-                <div class="voucher-options">
-                    <button class="voucher-btn" id="btn12h" onclick="claimVoucher(12)">
-                        Get 12H<br>(4 pts)
-                    </button>
-                    <button class="voucher-btn" id="btn24h" onclick="claimVoucher(24)">
-                        Get 24H<br>(5 pts)
-                    </button>
-                </div>
-                
-                <div id="voucherDisplay" class="hidden"></div>
             </div>
-
-            <!-- History Tab -->
-            <div id="historyTab" class="hidden">
-                <button class="refresh-btn" onclick="loadHistory()">🔄 Refresh History</button>
-                <div id="historyContent">
-                    <div class="no-data">Loading history...</div>
-                </div>
+            
+            <div class="voucher-options">
+                <button class="voucher-btn" id="btn12h" onclick="claimVoucher(12)">
+                    Get 12H<br>(4 pts)
+                </button>
+                <button class="voucher-btn" id="btn24h" onclick="claimVoucher(24)">
+                    Get 24H<br>(5 pts)
+                </button>
             </div>
             
             <button onclick="logout()" style="margin-top: 20px; background: #dc3545;">Logout</button>
         </div>
     </div>
 
+    <!-- Voucher Modal -->
+    <div class="modal-overlay" id="voucherModal">
+        <div class="modal">
+            <h2>🎉 Voucher Claimed!</h2>
+            <div class="voucher-code-display">
+                <div style="color: #666; font-size: 14px; margin-bottom: 5px;">Your Voucher Code:</div>
+                <div class="voucher-code-large" id="modalVoucherCode">XXXX-XXXX-XXXX</div>
+            </div>
+            <div class="modal-info">
+                Valid for <span id="modalHours">12</span> hours
+            </div>
+            <div>
+                <button class="copy-btn" id="copyBtn" onclick="copyVoucherCode()">📋 Copy Code</button>
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ===== CONFIGURATION =====
-        const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyXHOWGsN0w50nEuE3hDciA6qJa75qxfc_OM3dH9r1WRX4cQlqRskv6KlieBzVmFSVY/exec';
+        const GOOGLE_SHEETS_URL = 'YOUR_SCRIPT_URL_HERE';
         // =========================
 
         let currentUser = null;
         let userData = null;
+        let currentVoucherCode = '';
 
         function showMessage(elementId, message, type) {
             const el = document.getElementById(elementId);
@@ -407,56 +416,43 @@
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
             document.getElementById('macDisplay').textContent = currentUser;
-            switchTab('claim');
             updateDashboard();
         }
 
-        function switchTab(tab) {
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            
-            if (tab === 'claim') {
-                tabs[0].classList.add('active');
-                document.getElementById('claimTab').classList.remove('hidden');
-                document.getElementById('historyTab').classList.add('hidden');
-            } else if (tab === 'history') {
-                tabs[1].classList.add('active');
-                document.getElementById('claimTab').classList.add('hidden');
-                document.getElementById('historyTab').classList.remove('hidden');
-                loadHistory();
-            }
+        function showVoucherModal(voucherCode, hours) {
+            currentVoucherCode = voucherCode;
+            document.getElementById('modalVoucherCode').textContent = voucherCode;
+            document.getElementById('modalHours').textContent = hours;
+            document.getElementById('voucherModal').classList.add('show');
+            document.getElementById('copyBtn').textContent = '📋 Copy Code';
+            document.getElementById('copyBtn').classList.remove('copied');
         }
 
-        async function loadHistory() {
-            document.getElementById('historyContent').innerHTML = '<div class="no-data">Loading...</div>';
+        function closeModal() {
+            document.getElementById('voucherModal').classList.remove('show');
+        }
+
+        function copyVoucherCode() {
+            const textArea = document.createElement('textarea');
+            textArea.value = currentVoucherCode;
+            document.body.appendChild(textArea);
+            textArea.select();
             
             try {
-                const url = `${GOOGLE_SHEETS_URL}?action=getHistory&mac=${encodeURIComponent(currentUser)}`;
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.success && data.history && data.history.length > 0) {
-                    let html = '<table class="history-table">';
-                    html += '<thead><tr><th>Date & Time</th><th>Voucher Code</th><th>Hours</th><th>Points Used</th></tr></thead>';
-                    html += '<tbody>';
-                    
-                    data.history.forEach(item => {
-                        html += `<tr>
-                            <td>${item.timestamp}</td>
-                            <td><strong>${item.voucherCode}</strong></td>
-                            <td>${item.hours}H</td>
-                            <td>${item.pointsUsed} pts</td>
-                        </tr>`;
-                    });
-                    
-                    html += '</tbody></table>';
-                    document.getElementById('historyContent').innerHTML = html;
-                } else {
-                    document.getElementById('historyContent').innerHTML = '<div class="no-data">No claim history yet</div>';
-                }
-            } catch (error) {
-                document.getElementById('historyContent').innerHTML = '<div class="no-data">Error loading history</div>';
+                document.execCommand('copy');
+                const copyBtn = document.getElementById('copyBtn');
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Copy Code';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                alert('Failed to copy. Please copy manually: ' + currentVoucherCode);
             }
+            
+            document.body.removeChild(textArea);
         }
 
         async function register() {
@@ -555,7 +551,6 @@
             userData = null;
             document.getElementById('loginUsername').value = '';
             document.getElementById('loginPassword').value = '';
-            document.getElementById('voucherDisplay').classList.add('hidden');
             showLogin();
         }
 
@@ -602,17 +597,9 @@
                     userData.stock12h = data.stock12h;
                     userData.stock24h = data.stock24h;
 
-                    document.getElementById('voucherDisplay').innerHTML = `
-                        <div class="voucher-code">
-                            <h3>🎉 Voucher Claimed!</h3>
-                            <div class="code">${data.voucherCode}</div>
-                            <p style="margin-top: 10px; color: #666;">Valid for ${hours} hours</p>
-                            <p style="margin-top: 5px; color: #28a745; font-size: 12px;">✓ Automatically removed from database</p>
-                        </div>
-                    `;
-                    document.getElementById('voucherDisplay').classList.remove('hidden');
+                    // Show modal with voucher code
+                    showVoucherModal(data.voucherCode, hours);
                     
-                    showMessage('dashMessage', `Voucher claimed! ${required} points deducted`, 'success');
                     updateDashboard();
                 } else {
                     showMessage('dashMessage', data.message || 'Failed to claim voucher', 'error');
@@ -623,6 +610,13 @@
                 updateDashboard();
             }
         }
+
+        // Close modal when clicking outside
+        document.getElementById('voucherModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
 
         // Initialize
         showLogin();
