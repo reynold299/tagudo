@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piso Wifi Voucher System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        .link-btn {
+            background: transparent;
+            color: #667eea;
+            text-decoration: underline;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .points-display {
+            text-align: center;
+            font-size: 32px;
+            color: #667eea;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .voucher-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .voucher-btn {
+            flex: 1;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .voucher-btn:hover {
+            background: #218838;
+        }
+        
+        .voucher-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .voucher-code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+        
+        .voucher-code h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 2px;
+        }
+
+        .help-text {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginForm">
+            <h1>🌐 Piso Wifi Voucher</h1>
+            <div id="loginMessage"></div>
+            <div class="form-group">
+                <label>MAC Address:</label>
+                <input type="text" id="loginMac" placeholder="00:00:00:00:00:00">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="loginPassword" placeholder="Enter password">
+            </div>
+            <button onclick="login()">Login</button>
+            <div class="help-text">Forgot password? Contact administrator</div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <h1>Welcome!</h1>
+            <div id="dashMessage"></div>
+            <div class="points-display">
+                <div>Your Points</div>
+                <div id="pointsDisplay">0</div>
+            </div>
+            
+            <div class="info message">
+                4 Points = 12 Hours<br>
+                5 Points = 24 Hours
+            </div>
+            
+            <div class="voucher-options">
+                <button class="voucher-btn" id="btn12h" onclick="generateVoucher(12)">
+                    Get 12H<br>(4 pts)
+                </button>
+                <button class="voucher-btn" id="btn24h" onclick="generateVoucher(24)">
+                    Get 24H<br>(5 pts)
+                </button>
+            </div>
+            
+            <div id="voucherDisplay" class="hidden"></div>
+            
+            <button onclick="logout()" style="margin-top: 20px; background: #dc3545;">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        let userPoints = {};
+        let accounts = {};
+        let currentUser = null;
+
+        // Load accounts from external file
+        async function loadAccounts() {
+            try {
+                const response = await fetch('accounts.txt');
+                const text = await response.text();
+                const lines = text.split('\n');
+                
+                accounts = {};
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line && !line.startsWith('#')) {
+                        const [mac, password] = line.split(',').map(s => s.trim());
+                        if (mac && password) {
+                            accounts[mac] = { password: password };
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading accounts file:', error);
+                showMessage('loginMessage', 'Error loading accounts data', 'error');
+            }
+        }
+
+        // Load points from external file
+        async function loadPoints() {
+            try {
+                const response = await fetch('points.txt');
+                const text = await response.text();
+                const lines = text.split('\n');
+                
+                userPoints = {};
+                lines.forEach(line => {
+                    line = line.trim();
+                    if (line && !line.startsWith('#')) {
+                        const [mac, points] = line.split(',').map(s => s.trim());
+                        if (mac && points) {
+                            userPoints[mac] = parseInt(points);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading points file:', error);
+                showMessage('loginMessage', 'Error loading points data', 'error');
+            }
+        }
+
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="message ${type}">${message}</div>`;
+            setTimeout(() => el.innerHTML = '', 3000);
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            updateDashboard();
+        }
+
+        async function login() {
+            const mac = document.getElementById('loginMac').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+
+            if (!mac || !pass) {
+                showMessage('loginMessage', 'Please fill all fields', 'error');
+                return;
+            }
+
+            // Reload accounts and points before login
+            await loadAccounts();
+            await loadPoints();
+
+            if (!accounts[mac]) {
+                showMessage('loginMessage', 'MAC Address not found', 'error');
+                return;
+            }
+
+            if (accounts[mac].password !== pass) {
+                showMessage('loginMessage', 'Incorrect password', 'error');
+                return;
+            }
+
+            currentUser = mac;
+            showDashboard();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginMac').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('voucherDisplay').classList.add('hidden');
+            showLogin();
+        }
+
+        function updateDashboard() {
+            const points = userPoints[currentUser] || 0;
+            document.getElementById('pointsDisplay').textContent = points;
+            
+            document.getElementById('btn12h').disabled = points < 4;
+            document.getElementById('btn24h').disabled = points < 5;
+        }
+
+        function generateVoucher(hours) {
+            const points = userPoints[currentUser] || 0;
+            const required = hours === 12 ? 4 : 5;
+            
+            if (points < required) {
+                showMessage('dashMessage', 'Not enough points!', 'error');
+                return;
+            }
+
+            // Generate random voucher code
+            const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+            
+            // Deduct points (in memory only - you'll need to manually update points.txt)
+            userPoints[currentUser] -= required;
+            
+            // Display voucher
+            document.getElementById('voucherDisplay').innerHTML = `
+                <div class="voucher-code">
+                    <h3>🎉 Voucher Generated!</h3>
+                    <div class="code">${code}</div>
+                    <p style="margin-top: 10px; color: #666;">Valid for ${hours} hours</p>
+                    <p style="margin-top: 5px; color: #999; font-size: 12px;">Update points.txt to deduct ${required} points from ${currentUser}</p>
+                </div>
+            `;
+            document.getElementById('voucherDisplay').classList.remove('hidden');
+            
+            showMessage('dashMessage', `Voucher created! ${required} points deducted`, 'success');
+            updateDashboard();
+        }
+
+        // Initialize - load accounts and points on page load
+        loadAccounts();
+        loadPoints();
+        showLogin();
+    </script>
+</body>
+</html>
