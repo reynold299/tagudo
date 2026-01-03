@@ -209,24 +209,24 @@
             <h1>🌐 Piso Wifi Voucher</h1>
             <div id="loginMessage"></div>
             <div class="form-group">
-                <label>Username:</label>
-                <input type="text" id="loginUsername" placeholder="Enter your username">
+                <label>MAC Address:</label>
+                <input type="text" id="loginUsername" placeholder="Enter your MAC Address">
             </div>
             <div class="form-group">
                 <label>Password:</label>
                 <input type="password" id="loginPassword" placeholder="Enter password">
             </div>
             <button onclick="login()" id="loginBtn">Login</button>
-            <button class="link-btn" onclick="showRegister()">New User? Create Account</button>
+            <button class="link-btn" onclick="showRegister()">New User? Register MAC Address</button>
         </div>
 
         <!-- Register Form -->
         <div id="registerForm" class="hidden">
-            <h1>Create New Account</h1>
+            <h1>Register New MAC</h1>
             <div id="registerMessage"></div>
             <div class="form-group">
-                <label>Username:</label>
-                <input type="text" id="regUsername" placeholder="Choose a username">
+                <label>MAC Address:</label>
+                <input type="text" id="regUsername" placeholder="Enter MAC Address (e.g., AA:BB:CC:DD:EE:FF)">
             </div>
             <div class="form-group">
                 <label>Create Password:</label>
@@ -236,14 +236,17 @@
                 <label>Confirm Password:</label>
                 <input type="password" id="regPasswordConfirm" placeholder="Re-enter password">
             </div>
-            <button onclick="register()" id="registerBtn">Create Account</button>
+            <button onclick="register()" id="registerBtn">Register</button>
             <button class="link-btn" onclick="showLogin()">Back to Login</button>
             <div class="help-text">After registration, contact admin to get points added to your account</div>
         </div>
 
         <!-- Dashboard -->
         <div id="dashboard" class="hidden">
-            <h1>Welcome, <span id="usernameDisplay"></span>!</h1>
+            <h1>Welcome!</h1>
+            <div style="text-align: center; color: #666; font-size: 12px; margin-bottom: 10px;">
+                MAC: <span id="macDisplay"></span>
+            </div>
             <div id="dashMessage"></div>
             <div class="points-display">
                 <div>Your Points</div>
@@ -311,7 +314,7 @@
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('usernameDisplay').textContent = currentUser;
+            document.getElementById('macDisplay').textContent = currentUser;
             updateDashboard();
         }
 
@@ -321,7 +324,7 @@
             const passConfirm = document.getElementById('regPasswordConfirm').value;
 
             if (!username) {
-                showMessage('registerMessage', 'Please enter a username', 'error');
+                showMessage('registerMessage', 'Please enter a MAC Address', 'error');
                 return;
             }
 
@@ -342,14 +345,14 @@
 
             const registerBtn = document.getElementById('registerBtn');
             registerBtn.disabled = true;
-            registerBtn.textContent = 'Creating Account...';
+            registerBtn.textContent = 'Registering...';
 
             try {
                 const response = await fetch(`${GOOGLE_SHEETS_URL}?action=register&mac=${encodeURIComponent(username)}&password=${encodeURIComponent(pass)}`);
                 const data = await response.json();
 
                 if (data.success) {
-                    showMessage('registerMessage', 'Account created! You can now login. Contact admin to add points.', 'success');
+                    showMessage('registerMessage', 'MAC registered! You can now login. Contact admin to add points.', 'success');
                     setTimeout(() => {
                         document.getElementById('regUsername').value = '';
                         document.getElementById('regPassword').value = '';
@@ -363,7 +366,7 @@
                 showMessage('registerMessage', 'Connection error. Please try again.', 'error');
             } finally {
                 registerBtn.disabled = false;
-                registerBtn.textContent = 'Create Account';
+                registerBtn.textContent = 'Register';
             }
         }
 
@@ -372,7 +375,7 @@
             const pass = document.getElementById('loginPassword').value;
 
             if (!username) {
-                showMessage('loginMessage', 'Please enter username', 'error');
+                showMessage('loginMessage', 'Please enter MAC Address', 'error');
                 return;
             }
 
