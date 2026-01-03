@@ -1,8 +1,0 @@
-# Piso Wifi User Accounts
-# Format: MAC_ADDRESS, PASSWORD
-# Lines starting with # are comments
-
-00:00:00:00:00:01, password123
-00:00:00:00:00:02, mypass456
-AA:BB:CC:DD:EE:FF, secure789
-11:22:33:44:55:66, wifi2024
