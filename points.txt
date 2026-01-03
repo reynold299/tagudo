@@ -1,8 +1,0 @@
-# Piso Wifi Points Database
-# Format: MAC_ADDRESS, POINTS
-# Lines starting with # are comments
-
-00:00:00:00:00:01, 10
-00:00:00:00:00:02, 5
-AA:BB:CC:DD:EE:FF, 8
-11:22:33:44:55:66, 15
