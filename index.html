@@ -320,8 +320,8 @@
 
         async function register() {
             const username = document.getElementById('regUsername').value.trim();
-            const pass = document.getElementById('regPassword').value;
-            const passConfirm = document.getElementById('regPasswordConfirm').value;
+            const pass = document.getElementById('regPassword').value.trim(); // Added trim here
+            const passConfirm = document.getElementById('regPasswordConfirm').value.trim(); // Added trim here
 
             if (!username) {
                 showMessage('registerMessage', 'Please enter a MAC Address', 'error');
@@ -348,7 +348,17 @@
             registerBtn.textContent = 'Registering...';
 
             try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=register&mac=${encodeURIComponent(username)}&password=${encodeURIComponent(pass)}`);
+                // Using POST instead of GET to avoid URL encoding issues
+                const formData = new URLSearchParams();
+                formData.append('action', 'register');
+                formData.append('mac', username);
+                formData.append('password', pass);
+
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
                 const data = await response.json();
 
                 if (data.success) {
@@ -363,6 +373,7 @@
                     showMessage('registerMessage', data.message || 'Registration failed', 'error');
                 }
             } catch (error) {
+                console.error('Registration error:', error);
                 showMessage('registerMessage', 'Connection error. Please try again.', 'error');
             } finally {
                 registerBtn.disabled = false;
@@ -372,7 +383,7 @@
 
         async function login() {
             const username = document.getElementById('loginUsername').value.trim();
-            const pass = document.getElementById('loginPassword').value;
+            const pass = document.getElementById('loginPassword').value.trim(); // Added trim here
 
             if (!username) {
                 showMessage('loginMessage', 'Please enter MAC Address', 'error');
@@ -389,7 +400,17 @@
             loginBtn.textContent = 'Loading...';
 
             try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=login&mac=${encodeURIComponent(username)}&password=${encodeURIComponent(pass)}`);
+                // Using POST instead of GET
+                const formData = new URLSearchParams();
+                formData.append('action', 'login');
+                formData.append('mac', username);
+                formData.append('password', pass);
+
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
                 const data = await response.json();
 
                 if (data.success) {
@@ -400,6 +421,7 @@
                     showMessage('loginMessage', data.message || 'Login failed', 'error');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showMessage('loginMessage', 'Connection error. Please check your setup.', 'error');
             } finally {
                 loginBtn.disabled = false;
@@ -450,7 +472,16 @@
             document.getElementById('btn24h').disabled = true;
 
             try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=claim&mac=${encodeURIComponent(currentUser)}&hours=${hours}`);
+                const formData = new URLSearchParams();
+                formData.append('action', 'claim');
+                formData.append('mac', currentUser);
+                formData.append('hours', hours);
+
+                const response = await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
                 const data = await response.json();
 
                 if (data.success) {
@@ -475,6 +506,7 @@
                     await login();
                 }
             } catch (error) {
+                console.error('Claim error:', error);
                 showMessage('dashMessage', 'Connection error. Please try again.', 'error');
             } finally {
                 updateDashboard();
