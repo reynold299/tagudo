@@ -471,8 +471,17 @@
             registerBtn.textContent = 'Creating Account...';
 
             try {
-                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=register&mac=${encodeURIComponent(mac)}&password=${encodeURIComponent(pass)}`);
-                const data = await response.json();
+                const url = `${GOOGLE_SHEETS_URL}?action=register&mac=${encodeURIComponent(mac)}&password=${encodeURIComponent(pass)}`;
+                console.log('Requesting:', url);
+                
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                
+                const text = await response.text();
+                console.log('Response text:', text);
+                
+                const data = JSON.parse(text);
+                console.log('Parsed data:', data);
 
                 if (data.success) {
                     showMessage('registerMessage', 'Account created! You can now login. Contact admin to add points.', 'success');
@@ -485,8 +494,9 @@
                     showMessage('registerMessage', data.message || 'Registration failed', 'error');
                 }
             } catch (error) {
-                console.error('Registration error:', error);
-                showMessage('registerMessage', 'Connection error. Please try again.', 'error');
+                console.error('Full error:', error);
+                console.error('Error message:', error.message);
+                showMessage('registerMessage', `Error: ${error.message}`, 'error');
             } finally {
                 registerBtn.disabled = false;
                 registerBtn.textContent = 'Create Account';
