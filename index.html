@@ -3,518 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piso Wifi Voucher System</title>
+    <title>Debug Test</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: monospace;
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
-        button:hover:not(:disabled) {
-            background: #5568d3;
-        }
-        
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .link-btn {
-            background: transparent;
-            color: #667eea;
-            text-decoration: underline;
-            padding: 5px;
-            margin-top: 5px;
-        }
-        
-        .message {
-            padding: 10px;
+        .test-section {
+            background: #f0f0f0;
+            padding: 15px;
             margin: 10px 0;
             border-radius: 5px;
-            text-align: center;
         }
-        
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .points-display {
-            text-align: center;
-            font-size: 32px;
-            color: #667eea;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        
-        .voucher-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .voucher-btn {
-            flex: 1;
-            padding: 15px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        button {
+            padding: 10px 20px;
+            margin: 5px;
             cursor: pointer;
-            font-weight: bold;
         }
-        
-        .voucher-btn:hover:not(:disabled) {
-            background: #218838;
-        }
-        
-        .voucher-code {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            text-align: center;
-            border: 2px dashed #667eea;
-        }
-        
-        .voucher-code h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .code {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            letter-spacing: 2px;
-        }
-
-        .help-text {
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-
-        .stock-info {
-            display: flex;
-            justify-content: space-around;
-            margin: 15px 0;
+        .result {
+            background: white;
             padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
-
-        .stock-item {
-            text-align: center;
-        }
-
-        .stock-label {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .stock-count {
-            font-size: 20px;
-            font-weight: bold;
-            color: #667eea;
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 300px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Login Form -->
-        <div id="loginForm">
-            <h1>🌐 Piso Wifi Voucher</h1>
-            <div id="loginMessage"></div>
-            <div class="form-group">
-                <label>MAC Address:</label>
-                <input type="text" id="loginUsername" placeholder="Enter your MAC Address">
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="loginPassword" placeholder="Enter password">
-            </div>
-            <button onclick="login()" id="loginBtn">Login</button>
-            <button class="link-btn" onclick="showRegister()">New User? Register MAC Address</button>
-        </div>
+    <h1>Debug Testing</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Register and Check Encoding</h3>
+        <input type="text" id="testMac" placeholder="MAC Address" value="testuser123">
+        <input type="password" id="testPass" placeholder="Password" value="testpass">
+        <button onclick="testRegister()">Register</button>
+        <div class="result" id="registerResult"></div>
+    </div>
 
-        <!-- Register Form -->
-        <div id="registerForm" class="hidden">
-            <h1>Register New MAC</h1>
-            <div id="registerMessage"></div>
-            <div class="form-group">
-                <label>MAC Address:</label>
-                <input type="text" id="regUsername" placeholder="Enter MAC Address (e.g., AA:BB:CC:DD:EE:FF)">
-            </div>
-            <div class="form-group">
-                <label>Create Password:</label>
-                <input type="password" id="regPassword" placeholder="Create a secure password">
-            </div>
-            <div class="form-group">
-                <label>Confirm Password:</label>
-                <input type="password" id="regPasswordConfirm" placeholder="Re-enter password">
-            </div>
-            <button onclick="register()" id="registerBtn">Register</button>
-            <button class="link-btn" onclick="showLogin()">Back to Login</button>
-            <div class="help-text">After registration, contact admin to get points added to your account</div>
-        </div>
+    <div class="test-section">
+        <h3>Test 2: Login with Same Credentials</h3>
+        <button onclick="testLogin()">Login with Same Credentials</button>
+        <div class="result" id="loginResult"></div>
+    </div>
 
-        <!-- Dashboard -->
-        <div id="dashboard" class="hidden">
-            <h1>Welcome!</h1>
-            <div style="text-align: center; color: #666; font-size: 12px; margin-bottom: 10px;">
-                MAC: <span id="macDisplay"></span>
-            </div>
-            <div id="dashMessage"></div>
-            <div class="points-display">
-                <div>Your Points</div>
-                <div id="pointsDisplay">0</div>
-            </div>
-            
-            <div class="info message">
-                4 Points = 12 Hours<br>
-                5 Points = 24 Hours
-            </div>
+    <div class="test-section">
+        <h3>Test 3: Get All Accounts (Debug)</h3>
+        <button onclick="testDebug()">View All Accounts</button>
+        <div class="result" id="debugResult"></div>
+    </div>
 
-            <div class="stock-info">
-                <div class="stock-item">
-                    <div class="stock-label">12H Available</div>
-                    <div class="stock-count" id="stock12h">0</div>
-                </div>
-                <div class="stock-item">
-                    <div class="stock-label">24H Available</div>
-                    <div class="stock-count" id="stock24h">0</div>
-                </div>
-            </div>
-            
-            <div class="voucher-options">
-                <button class="voucher-btn" id="btn12h" onclick="claimVoucher(12)">
-                    Get 12H<br>(4 pts)
-                </button>
-                <button class="voucher-btn" id="btn24h" onclick="claimVoucher(24)">
-                    Get 24H<br>(5 pts)
-                </button>
-            </div>
-            
-            <div id="voucherDisplay" class="hidden"></div>
-            
-            <button onclick="logout()" style="margin-top: 20px; background: #dc3545;">Logout</button>
-        </div>
+    <div class="test-section">
+        <h3>Test 4: Character Analysis</h3>
+        <button onclick="analyzeChars()">Analyze Characters</button>
+        <div class="result" id="charResult"></div>
     </div>
 
     <script>
-        // ===== CONFIGURATION =====
         const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwHp34E2l_839EdUabkXLS7TJ3eVkVJhy47o6lBx2tFM4N615y7cmLsOTJf_XsZ_IVS/exec';
-        // =========================
 
-        let currentUser = null;
-        let userData = null;
-
-        function showMessage(elementId, message, type) {
-            const el = document.getElementById(elementId);
-            el.innerHTML = `<div class="message ${type}">${message}</div>`;
-            setTimeout(() => el.innerHTML = '', 5000);
-        }
-
-        function showLogin() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('dashboard').classList.add('hidden');
-        }
-
-        function showRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.getElementById('dashboard').classList.add('hidden');
-        }
-
-        function showDashboard() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('macDisplay').textContent = currentUser;
-            updateDashboard();
-        }
-
-        async function register() {
-            const username = document.getElementById('regUsername').value.trim();
-            const pass = document.getElementById('regPassword').value.trim(); // Added trim here
-            const passConfirm = document.getElementById('regPasswordConfirm').value.trim(); // Added trim here
-
-            if (!username) {
-                showMessage('registerMessage', 'Please enter a MAC Address', 'error');
-                return;
-            }
-
-            if (!pass || !passConfirm) {
-                showMessage('registerMessage', 'Please fill all fields', 'error');
-                return;
-            }
-
-            if (pass !== passConfirm) {
-                showMessage('registerMessage', 'Passwords do not match', 'error');
-                return;
-            }
-
-            if (pass.length < 6) {
-                showMessage('registerMessage', 'Password must be at least 6 characters', 'error');
-                return;
-            }
-
-            const registerBtn = document.getElementById('registerBtn');
-            registerBtn.disabled = true;
-            registerBtn.textContent = 'Registering...';
+        async function testRegister() {
+            const mac = document.getElementById('testMac').value;
+            const pass = document.getElementById('testPass').value;
+            
+            const formData = new URLSearchParams();
+            formData.append('action', 'register');
+            formData.append('mac', mac);
+            formData.append('password', pass);
 
             try {
-                // Using POST instead of GET to avoid URL encoding issues
-                const formData = new URLSearchParams();
-                formData.append('action', 'register');
-                formData.append('mac', username);
-                formData.append('password', pass);
-
                 const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
                     body: formData
                 });
                 
                 const data = await response.json();
-
-                if (data.success) {
-                    showMessage('registerMessage', 'MAC registered! You can now login. Contact admin to add points.', 'success');
-                    setTimeout(() => {
-                        document.getElementById('regUsername').value = '';
-                        document.getElementById('regPassword').value = '';
-                        document.getElementById('regPasswordConfirm').value = '';
-                        showLogin();
-                    }, 3000);
-                } else {
-                    showMessage('registerMessage', data.message || 'Registration failed', 'error');
-                }
+                document.getElementById('registerResult').textContent = 
+                    'Response: ' + JSON.stringify(data, null, 2) + 
+                    '\n\nSent MAC: "' + mac + '"' +
+                    '\nSent Pass: "' + pass + '"' +
+                    '\nMAC Length: ' + mac.length +
+                    '\nPass Length: ' + pass.length;
             } catch (error) {
-                console.error('Registration error:', error);
-                showMessage('registerMessage', 'Connection error. Please try again.', 'error');
-            } finally {
-                registerBtn.disabled = false;
-                registerBtn.textContent = 'Register';
+                document.getElementById('registerResult').textContent = 'Error: ' + error.message;
             }
         }
 
-        async function login() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const pass = document.getElementById('loginPassword').value.trim(); // Added trim here
-
-            if (!username) {
-                showMessage('loginMessage', 'Please enter MAC Address', 'error');
-                return;
-            }
-
-            if (!pass) {
-                showMessage('loginMessage', 'Please enter password', 'error');
-                return;
-            }
-
-            const loginBtn = document.getElementById('loginBtn');
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Loading...';
+        async function testLogin() {
+            const mac = document.getElementById('testMac').value;
+            const pass = document.getElementById('testPass').value;
+            
+            const formData = new URLSearchParams();
+            formData.append('action', 'login');
+            formData.append('mac', mac);
+            formData.append('password', pass);
 
             try {
-                // Using POST instead of GET
-                const formData = new URLSearchParams();
-                formData.append('action', 'login');
-                formData.append('mac', username);
-                formData.append('password', pass);
-
                 const response = await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
                     body: formData
                 });
                 
                 const data = await response.json();
-
-                if (data.success) {
-                    currentUser = username;
-                    userData = data;
-                    showDashboard();
-                } else {
-                    showMessage('loginMessage', data.message || 'Login failed', 'error');
-                }
+                document.getElementById('loginResult').textContent = 
+                    'Response: ' + JSON.stringify(data, null, 2) + 
+                    '\n\nSent MAC: "' + mac + '"' +
+                    '\nSent Pass: "' + pass + '"' +
+                    '\nMAC Length: ' + mac.length +
+                    '\nPass Length: ' + pass.length;
             } catch (error) {
-                console.error('Login error:', error);
-                showMessage('loginMessage', 'Connection error. Please check your setup.', 'error');
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Login';
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
             }
         }
 
-        function logout() {
-            currentUser = null;
-            userData = null;
-            document.getElementById('loginUsername').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('voucherDisplay').classList.add('hidden');
-            showLogin();
-        }
-
-        function updateDashboard() {
-            if (!userData) return;
-
-            document.getElementById('pointsDisplay').textContent = userData.points || 0;
-            document.getElementById('stock12h').textContent = userData.stock12h || 0;
-            document.getElementById('stock24h').textContent = userData.stock24h || 0;
-            
-            const points = userData.points || 0;
-            const has12hStock = (userData.stock12h || 0) > 0;
-            const has24hStock = (userData.stock24h || 0) > 0;
-            
-            document.getElementById('btn12h').disabled = points < 4 || !has12hStock;
-            document.getElementById('btn24h').disabled = points < 5 || !has24hStock;
-        }
-
-        async function claimVoucher(hours) {
-            const points = userData.points || 0;
-            const required = hours === 12 ? 4 : 5;
-            
-            if (points < required) {
-                showMessage('dashMessage', 'Not enough points!', 'error');
-                return;
-            }
-
-            const stockAvailable = hours === 12 ? userData.stock12h : userData.stock24h;
-            if (stockAvailable <= 0) {
-                showMessage('dashMessage', `No ${hours}H vouchers available!`, 'error');
-                return;
-            }
-
-            document.getElementById('btn12h').disabled = true;
-            document.getElementById('btn24h').disabled = true;
-
+        async function testDebug() {
             try {
-                const formData = new URLSearchParams();
-                formData.append('action', 'claim');
-                formData.append('mac', currentUser);
-                formData.append('hours', hours);
-
-                const response = await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
+                const response = await fetch(GOOGLE_SHEETS_URL + '?action=debug');
                 const data = await response.json();
-
-                if (data.success) {
-                    userData.points = data.newPoints;
-                    userData.stock12h = data.stock12h;
-                    userData.stock24h = data.stock24h;
-
-                    document.getElementById('voucherDisplay').innerHTML = `
-                        <div class="voucher-code">
-                            <h3>🎉 Voucher Claimed!</h3>
-                            <div class="code">${data.voucherCode}</div>
-                            <p style="margin-top: 10px; color: #666;">Valid for ${hours} hours</p>
-                            <p style="margin-top: 5px; color: #28a745; font-size: 12px;">✓ Automatically removed from database</p>
-                        </div>
-                    `;
-                    document.getElementById('voucherDisplay').classList.remove('hidden');
-                    
-                    showMessage('dashMessage', `Voucher claimed! ${required} points deducted`, 'success');
-                    updateDashboard();
-                } else {
-                    showMessage('dashMessage', data.message || 'Failed to claim voucher', 'error');
-                    await login();
-                }
+                document.getElementById('debugResult').textContent = JSON.stringify(data, null, 2);
             } catch (error) {
-                console.error('Claim error:', error);
-                showMessage('dashMessage', 'Connection error. Please try again.', 'error');
-            } finally {
-                updateDashboard();
+                document.getElementById('debugResult').textContent = 'Error: ' + error.message;
             }
         }
 
-        // Initialize
-        showLogin();
+        function analyzeChars() {
+            const mac = document.getElementById('testMac').value;
+            const pass = document.getElementById('testPass').value;
+            
+            let macAnalysis = 'MAC Analysis:\n';
+            for (let i = 0; i < mac.length; i++) {
+                macAnalysis += `[${i}] "${mac[i]}" - Code: ${mac.charCodeAt(i)}\n`;
+            }
+            
+            let passAnalysis = '\n\nPassword Analysis:\n';
+            for (let i = 0; i < pass.length; i++) {
+                passAnalysis += `[${i}] "${pass[i]}" - Code: ${pass.charCodeAt(i)}\n`;
+            }
+            
+            document.getElementById('charResult').textContent = macAnalysis + passAnalysis;
+        }
     </script>
 </body>
 </html>
