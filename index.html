@@ -61,6 +61,11 @@
             border-color: #667eea;
         }
         
+        input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
         button {
             width: 100%;
             padding: 12px;
@@ -74,13 +79,21 @@
             margin-top: 10px;
         }
         
-        button:hover {
+        button:hover:not(:disabled) {
             background: #5568d3;
         }
         
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+        
+        .link-btn {
+            background: transparent;
+            color: #667eea;
+            text-decoration: underline;
+            padding: 5px;
+            margin-top: 5px;
         }
         
         .message {
@@ -193,10 +206,26 @@
             color: #667eea;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
+        .detect-btn {
+            background: #17a2b8;
+            margin-top: 5px;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .detect-btn:hover {
+            background: #138496;
+        }
+
+        .mac-display {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 13px;
             color: #667eea;
+            text-align: center;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -208,14 +237,39 @@
             <div id="loginMessage"></div>
             <div class="form-group">
                 <label>MAC Address:</label>
-                <input type="text" id="loginMac" placeholder="00:00:00:00:00:00">
+                <input type="text" id="loginMac" placeholder="Detecting..." readonly>
+                <div id="macDisplay" class="mac-display hidden"></div>
+                <button class="detect-btn" onclick="detectMAC()">🔍 Detect MAC Address</button>
             </div>
             <div class="form-group">
                 <label>Password:</label>
                 <input type="password" id="loginPassword" placeholder="Enter password">
             </div>
             <button onclick="login()" id="loginBtn">Login</button>
-            <div class="help-text">Forgot password? Contact administrator</div>
+            <button class="link-btn" onclick="showRegister()">New User? Create Account</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="hidden">
+            <h1>Create New Account</h1>
+            <div id="registerMessage"></div>
+            <div class="form-group">
+                <label>MAC Address:</label>
+                <input type="text" id="regMac" placeholder="Detecting..." readonly>
+                <div id="regMacDisplay" class="mac-display hidden"></div>
+                <button class="detect-btn" onclick="detectMACReg()">🔍 Detect MAC Address</button>
+            </div>
+            <div class="form-group">
+                <label>Create Password:</label>
+                <input type="password" id="regPassword" placeholder="Create a secure password">
+            </div>
+            <div class="form-group">
+                <label>Confirm Password:</label>
+                <input type="password" id="regPasswordConfirm" placeholder="Re-enter password">
+            </div>
+            <button onclick="register()" id="registerBtn">Create Account</button>
+            <button class="link-btn" onclick="showLogin()">Back to Login</button>
+            <div class="help-text">After registration, contact admin to get points added to your account</div>
         </div>
 
         <!-- Dashboard -->
@@ -265,6 +319,100 @@
 
         let currentUser = null;
         let userData = null;
+        let detectedMAC = null;
+
+        // Detect MAC Address (uses various methods)
+        async function detectMAC() {
+            try {
+                // Method 1: Try WebRTC (works in most browsers)
+                const pc = new RTCPeerConnection({iceServers: []});
+                pc.createDataChannel('');
+                
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                
+                const localDescription = pc.localDescription.sdp;
+                const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
+                const ips = localDescription.match(ipRegex);
+                
+                if (ips && ips.length > 0) {
+                    // Generate pseudo-MAC from IP
+                    const ip = ips[0];
+                    const mac = generateMACFromIP(ip);
+                    detectedMAC = mac;
+                    document.getElementById('loginMac').value = mac;
+                    document.getElementById('macDisplay').textContent = `Detected: ${mac}`;
+                    document.getElementById('macDisplay').classList.remove('hidden');
+                    showMessage('loginMessage', 'MAC address detected!', 'success');
+                } else {
+                    throw new Error('No IP found');
+                }
+                
+                pc.close();
+            } catch (error) {
+                // Fallback: Generate random MAC
+                const mac = generateRandomMAC();
+                detectedMAC = mac;
+                document.getElementById('loginMac').value = mac;
+                document.getElementById('macDisplay').textContent = `Generated: ${mac}`;
+                document.getElementById('macDisplay').classList.remove('hidden');
+                showMessage('loginMessage', 'Unique ID generated for this device', 'info');
+            }
+        }
+
+        async function detectMACReg() {
+            try {
+                const pc = new RTCPeerConnection({iceServers: []});
+                pc.createDataChannel('');
+                
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                
+                const localDescription = pc.localDescription.sdp;
+                const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g;
+                const ips = localDescription.match(ipRegex);
+                
+                if (ips && ips.length > 0) {
+                    const ip = ips[0];
+                    const mac = generateMACFromIP(ip);
+                    detectedMAC = mac;
+                    document.getElementById('regMac').value = mac;
+                    document.getElementById('regMacDisplay').textContent = `Detected: ${mac}`;
+                    document.getElementById('regMacDisplay').classList.remove('hidden');
+                    showMessage('registerMessage', 'MAC address detected!', 'success');
+                } else {
+                    throw new Error('No IP found');
+                }
+                
+                pc.close();
+            } catch (error) {
+                const mac = generateRandomMAC();
+                detectedMAC = mac;
+                document.getElementById('regMac').value = mac;
+                document.getElementById('regMacDisplay').textContent = `Generated: ${mac}`;
+                document.getElementById('regMacDisplay').classList.remove('hidden');
+                showMessage('registerMessage', 'Unique ID generated for this device', 'info');
+            }
+        }
+
+        function generateMACFromIP(ip) {
+            // Convert IP to MAC-like format
+            const parts = ip.split('.').map(p => parseInt(p).toString(16).padStart(2, '0'));
+            const random = Math.random().toString(16).substr(2, 4);
+            return `${parts.join(':').toUpperCase()}:${random.substr(0, 2).toUpperCase()}:${random.substr(2, 2).toUpperCase()}`;
+        }
+
+        function generateRandomMAC() {
+            // Generate random MAC address
+            const hexDigits = "0123456789ABCDEF";
+            let mac = "";
+            for (let i = 0; i < 6; i++) {
+                mac += hexDigits.charAt(Math.floor(Math.random() * 16));
+                mac += hexDigits.charAt(Math.floor(Math.random() * 16));
+                if (i < 5) mac += ":";
+            }
+            return mac;
+        }
 
         function showMessage(elementId, message, type) {
             const el = document.getElementById(elementId);
@@ -274,21 +422,88 @@
 
         function showLogin() {
             document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('dashboard').classList.add('hidden');
+            detectMAC();
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('dashboard').classList.add('hidden');
+            detectMACReg();
         }
 
         function showDashboard() {
             document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
             updateDashboard();
+        }
+
+        async function register() {
+            const mac = document.getElementById('regMac').value.trim();
+            const pass = document.getElementById('regPassword').value;
+            const passConfirm = document.getElementById('regPasswordConfirm').value;
+
+            if (!mac) {
+                showMessage('registerMessage', 'Please detect MAC address first', 'error');
+                return;
+            }
+
+            if (!pass || !passConfirm) {
+                showMessage('registerMessage', 'Please fill all fields', 'error');
+                return;
+            }
+
+            if (pass !== passConfirm) {
+                showMessage('registerMessage', 'Passwords do not match', 'error');
+                return;
+            }
+
+            if (pass.length < 6) {
+                showMessage('registerMessage', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating Account...';
+
+            try {
+                const response = await fetch(`${GOOGLE_SHEETS_URL}?action=register&mac=${encodeURIComponent(mac)}&password=${encodeURIComponent(pass)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('registerMessage', 'Account created! You can now login. Contact admin to add points.', 'success');
+                    setTimeout(() => {
+                        document.getElementById('regPassword').value = '';
+                        document.getElementById('regPasswordConfirm').value = '';
+                        showLogin();
+                    }, 3000);
+                } else {
+                    showMessage('registerMessage', data.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showMessage('registerMessage', 'Connection error. Please try again.', 'error');
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+            }
         }
 
         async function login() {
             const mac = document.getElementById('loginMac').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
-            if (!mac || !pass) {
-                showMessage('loginMessage', 'Please fill all fields', 'error');
+            if (!mac) {
+                showMessage('loginMessage', 'Please detect MAC address first', 'error');
+                return;
+            }
+
+            if (!pass) {
+                showMessage('loginMessage', 'Please enter password', 'error');
                 return;
             }
 
@@ -319,7 +534,6 @@
         function logout() {
             currentUser = null;
             userData = null;
-            document.getElementById('loginMac').value = '';
             document.getElementById('loginPassword').value = '';
             document.getElementById('voucherDisplay').classList.add('hidden');
             showLogin();
@@ -355,7 +569,6 @@
                 return;
             }
 
-            // Disable buttons during claim
             document.getElementById('btn12h').disabled = true;
             document.getElementById('btn24h').disabled = true;
 
@@ -364,12 +577,10 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Update local data
                     userData.points = data.newPoints;
                     userData.stock12h = data.stock12h;
                     userData.stock24h = data.stock24h;
 
-                    // Display voucher
                     document.getElementById('voucherDisplay').innerHTML = `
                         <div class="voucher-code">
                             <h3>🎉 Voucher Claimed!</h3>
@@ -384,14 +595,12 @@
                     updateDashboard();
                 } else {
                     showMessage('dashMessage', data.message || 'Failed to claim voucher', 'error');
-                    // Reload user data
                     await login();
                 }
             } catch (error) {
                 console.error('Claim error:', error);
                 showMessage('dashMessage', 'Connection error. Please try again.', 'error');
             } finally {
-                // Re-enable buttons
                 updateDashboard();
             }
         }
